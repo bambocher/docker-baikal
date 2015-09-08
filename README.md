@@ -13,7 +13,7 @@ docker run \
     bambucha/baikal
 ```
 
-Setup Baikal using [installer](http://localhost/install.php).
+Setup Baikal using [admin](http://localhost/admin).
 
 ### Data container
 
