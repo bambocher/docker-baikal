@@ -1,7 +1,7 @@
 FROM alpine:3.2
 MAINTAINER Dmitry Prazdnichnov <dp@bambucha.org>
 
-RUN apk --update add unzip lighttpd php-cgi php-pdo_sqlite php-pdo_mysql php-xml \
+RUN apk --update add unzip lighttpd php-cgi php-ctype php-dom php-pdo_sqlite php-pdo_mysql php-xml \
     && rm -rf /var/cache/apk/*
 
 ENV VERSION		0.2.7
