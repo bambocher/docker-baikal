@@ -1,25 +1,27 @@
-FROM alpine:3.2
+FROM alpine:3.4
 MAINTAINER Dmitry Prazdnichnov <dp@bambucha.org>
 
-RUN apk --update add unzip lighttpd php-cgi php-ctype php-dom php-pdo_sqlite php-pdo_mysql php-xml openssl php-openssl php-json php-xmlreader \
-    && rm -rf /var/cache/apk/*
+ENV VERSION  0.4.5
+ENV CHECKSUM 533e46ffcafda24e91aabbbc5873b7d1153d538dde599927f77e1595793ddb3e
 
-ENV VERSION	0.4.3
-ENV CHECKSUM	6ebe0b64b5a89194eb6672313b54aa2c
+ADD baikal.sh /usr/local/bin/baikal
 
-RUN wget -O baikal.zip https://github.com/fruux/Baikal/releases/download/$VERSION/baikal-$VERSION.zip \
-    && echo "$CHECKSUM  baikal.zip" | md5sum -c - \
-    && unzip baikal.zip -d / \
-    && rm baikal.zip \
-    && chmod 755 /baikal \
-    && chown -R lighttpd:lighttpd /baikal \
-    && sed -i -e "s/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/g" /etc/php/php.ini \
-    && mkdir /baikal/html/.well-known
+RUN apk --no-cache add unzip openssl lighttpd php5-cgi php5-ctype php5-dom \
+        php5-pdo_sqlite php5-pdo_mysql php5-xml php5-openssl php5-json \
+        php5-xmlreader \
+    && wget https://github.com/fruux/Baikal/releases/download/$VERSION/baikal-$VERSION.zip \
+    && echo $CHECKSUM "" baikal*.zip | sha256sum -c - \
+    && unzip baikal*.zip \
+    && rm baikal*.zip \
+    && chmod +x /usr/local/bin/baikal \
+    && sed -ie "s/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/g" /etc/php5/php.ini \
+    && mkdir /baikal/html/.well-known \
+    && apk del -rf --purge openssl unzip
 
 ADD lighttpd.conf /etc/lighttpd/lighttpd.conf
 
-EXPOSE 80
-
 VOLUME /baikal/Specific
 
-ENTRYPOINT ["lighttpd", "-D", "-f", "/etc/lighttpd/lighttpd.conf"]
+EXPOSE 80
+
+ENTRYPOINT ["baikal"]
