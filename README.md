@@ -1,12 +1,17 @@
 ## Alpine Baikal Docker Container
 
-### Run:
+[![GitHub Tag](https://img.shields.io/github/tag/bambocher/docker-baikal.svg)](https://registry.hub.docker.com/u/bambucha/baikal/)
+[![Docker Stars](https://img.shields.io/docker/stars/bambucha/baikal.svg)](https://registry.hub.docker.com/u/bambucha/baikal/)
+[![Docker Pulls](https://img.shields.io/docker/pulls/bambucha/baikal.svg)](https://registry.hub.docker.com/u/bambucha/baikal/)
+[![Docker Automated Build](https://img.shields.io/badge/automated-build-green.svg)](https://registry.hub.docker.com/u/bambucha/baikal/)
+[![Docker License](https://img.shields.io/badge/license-MIT-green.svg)](https://registry.hub.docker.com/u/bambucha/baikal/)
 
-Run Baikal container:
+### Usage:
 
 ```shell
 docker run \
     --publish 80:80 \
+    --volume `pwd`/config:/baikal/Specific
     --name baikal \
     --restart always \
     --detach \
@@ -15,96 +20,6 @@ docker run \
 
 Setup Baikal using [admin](http://localhost/admin).
 
-### Data container
-
-Create data container:
-
-```shell
-docker run --volumes-from baikal --name baikal-data busybox
-```
-
-Now you can safely delete baikal container:
-
-```shell
-docker stop baikal && docker rm baikal
-```
-
-To restore baikal, create new baikal container and attach baikal-data volume to it:
-
-```shell
-docker run \
-    --publish 80:80 \
-    --volumes-from baikal-data \
-    --name baikal \
-    --restart always \
-    --detach \
-    bambucha/baikal
-```
-
-### Backup
-
-Create baikal-backup.tar.gz archive in current directory using temporaty container:
-
-```shell
-docker run \
-    --rm \
-    --volumes-from baikal-data \
-    --volume $(pwd):/backups \
-    alpine:3.2 \
-    tar zcvf /backups/baikal-backup.tar.gz /baikal
-```
-
-### Restore
-
-Run DokuWiki container:
-
-```shell
-docker run \
-    --publish 80:80 \
-    --name baikal \
-    --restart always \
-    --detach \
-    bambucha/baikal
-```
-
-Create data container:
-
-```shell
-docker run --volumes-from baikal --name baikal-data busybox
-```
-
-Stop baikal:
-
-```shell
-docker stop baikal
-```
-
-Restore from backup using temporary container:
-
-```shell
-docker run \
-    --rm \
-    --volumes-from baikal \
-    -w / \
-    -v $(pwd):/backup \
-    alpine:3.2 \
-    tar xzvf /backup/baikal-backup.tar.gz
-```
-
-Start baikal:
-
-```shell
-docker start baikal
-```
-
-### Build:
-
-```shell
-git clone https://github.com/bambocher/docker-baikal
-cd docker-baikal
-docker build --tag bambucha/baikal .
-```
-
 ### License
 
-[The MIT License (MIT)](LICENSE)
+[The MIT License](LICENSE)
