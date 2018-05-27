@@ -1,4 +1,4 @@
-FROM alpine
+FROM alpine:3.5
 MAINTAINER Dmitry Prazdnichnov <dp@bambucha.org>
 
 ENV VERSION  0.4.6
